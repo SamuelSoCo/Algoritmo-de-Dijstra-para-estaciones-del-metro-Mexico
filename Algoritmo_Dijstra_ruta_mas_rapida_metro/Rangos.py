@@ -1,76 +1,65 @@
-"""
-rangos.py
-
-Script sencillo para calcular "rangos" entre dos conjuntos de puntos A y B.
-Para cada punto p in B, su rango = número de puntos q in A tal que q.y < p.y.
-
-Provee:
- - implementación directa (fácil de entender, O(|A| * |B|))
- - implementación eficiente (ordenar Y de A y usar búsqueda binaria, O((|A|+|B|) log |A|))
- - menú interactivo para probar y mostrar resultados
-"""
-
 from bisect import bisect_left
 from typing import List, Tuple
 
-Point = Tuple[float, float]  # (x, y)
+Punto = Tuple[float, float]  # (x, y)
 
 
 # -----------------------------
 # Implementación simple (clara)
 # -----------------------------
-def compute_ranks_bruteforce(A: List[Point], B: List[Point]) -> List[int]:
+def calcular_rangos_fuerza_bruta(ConjuntoA: List[Punto], ConjuntoB: List[Punto]) -> List[int]:
     """
     Para cada punto p en B cuenta cuántos puntos q en A tienen q.y < p.y.
     Complejidad: O(|A| * |B|). Muy clara pero lenta si A y B son grandes.
     """
-    ranks = []
-    for bx, by in B:
-        count = 0
-        for ax, ay in A:
-            if ay < by:
-                count += 1
-        ranks.append(count)
-    return ranks
+    rangos = []
+    for _, coordenada_y_b in ConjuntoB:
+        contador = 0
+        for _, coordenada_y_a in ConjuntoA:
+            if coordenada_y_a < coordenada_y_b:
+                contador += 1
+        rangos.append(contador)
+    return rangos
 
 
 # -----------------------------------------
 # Implementación más eficiente (ordenada)
 # -----------------------------------------
-def compute_ranks_sorted(A: List[Point], B: List[Point]) -> List[int]:
+def calcular_rangos_ordenado(ConjuntoA: List[Punto], ConjuntoB: List[Punto]) -> List[int]:
     """
     Ordena las coordenadas Y de A y usa búsqueda binaria para contar
     cuántas Y_A < y_b para cada punto en B.
     Complejidad: ordenar O(|A| log |A|) + O(|B| log |A|) para las consultas.
     """
     # Extraer y ordenar solo las coordenadas Y de A
-    y_a_sorted = sorted([ay for (_, ay) in A])
-    ranks = []
-    for _, by in B:
+    coordenadas_y_a_ordenadas = sorted([ay for (_, ay) in ConjuntoA])
+    rangos = []
+    for _, coordenada_y_b in ConjuntoB:
         # bisect_left devuelve la primera posición donde by podría insertarse
         # manteniendo el orden; es igual al número de elementos < by.
-        count = bisect_left(y_a_sorted, by)
-        ranks.append(count)
-    return ranks
+        contador = bisect_left(coordenadas_y_a_ordenadas, coordenada_y_b)
+        rangos.append(contador)
+    return rangos
 
 
 # -----------------------------
 # Utilidades de entrada/impresion
 # -----------------------------
-def parse_point(text: str) -> Point:
+def parsear_punto(texto: str) -> Punto:
     """Parsea 'x,y' o 'x y' a una tupla (float(x), float(y))."""
-    sep = ',' if ',' in text else None
-    parts = text.split(sep)
-    if len(parts) == 1:
-        parts = text.split()
-    if len(parts) != 2:
+    separador = ',' if ',' in texto else None
+    partes = texto.split(separador)
+    if len(partes) == 1:
+        partes = texto.split()
+    if len(partes) != 2:
         raise ValueError("Formato inválido. Usa 'x,y' o 'x y'.")
-    return float(parts[0].strip()), float(parts[1].strip())
+    return float(partes[0].strip()), float(partes[1].strip())
 
 
-def print_points(points: List[Point], label: str = "Puntos"):
-    print(f"\n{label} (x, y):")
-    for i, (x, y) in enumerate(points):
+def imprimir_puntos(puntos: List[Punto], etiqueta: str = "Puntos"):
+    """Imprime una lista de puntos con su índice."""
+    print(f"\n{etiqueta} (x, y):")
+    for i, (x, y) in enumerate(puntos):
         print(f"  [{i}] ({x}, {y})")
     print()
 
@@ -78,13 +67,13 @@ def print_points(points: List[Point], label: str = "Puntos"):
 # -----------------------------
 # Datos de ejemplo (imagen ayuda)
 # -----------------------------
-EXAMPLE_A = [
+EJEMPLO_A = [
     (0.5, 3.0),
     (0.1, 1.0),
     (0.3, 0.2),
 ]
 
-EXAMPLE_B = [
+EJEMPLO_B = [
     (1.5, 3.5),
     (1.8, 1.2),
     (1.1, 0.4),
@@ -95,8 +84,8 @@ EXAMPLE_B = [
 # Menú simple en consola
 # -----------------------------
 def menu():
-    A = EXAMPLE_A.copy()
-    B = EXAMPLE_B.copy()
+    A = EJEMPLO_A.copy()
+    B = EJEMPLO_B.copy()
 
     while True:
         print("\n--- Menú Rangos ---")
@@ -107,42 +96,42 @@ def menu():
         print("5) Calcular rangos (método simple O(|A|*|B|))")
         print("6) Calcular rangos (método eficiente O((|A|+|B|) log |A|))")
         print("7) Salir")
-        opt = input("Elige una opción: ").strip()
+        opcion = input("Elige una opción: ").strip()
 
-        if opt == '1':
-            A = EXAMPLE_A.copy()
-            B = EXAMPLE_B.copy()
+        if opcion == '1':
+            A = EJEMPLO_A.copy()
+            B = EJEMPLO_B.copy()
             print("Se cargaron los datos de ejemplo.")
-        elif opt == '2':
-            print_points(A, "Conjunto A")
-            print_points(B, "Conjunto B")
-        elif opt == '3':
+        elif opcion == '2':
+            imprimir_puntos(A, "Conjunto A")
+            imprimir_puntos(B, "Conjunto B")
+        elif opcion == '3':
             A = []
             print("Ingresa puntos para A. Escribe vacío para terminar.")
             while True:
-                line = input("Punto A (x,y): ").strip()
-                if not line:
+                linea = input("Punto A (x,y): ").strip()
+                if not linea:
                     break
                 try:
-                    pt = parse_point(line)
+                    pt = parsear_punto(linea)
                     A.append(pt)
                 except Exception as e:
                     print("Error:", e)
             print("Conjunto A actualizado.")
-        elif opt == '4':
+        elif opcion == '4':
             B = []
             print("Ingresa puntos para B. Escribe vacío para terminar.")
             while True:
-                line = input("Punto B (x,y): ").strip()
-                if not line:
+                linea = input("Punto B (x,y): ").strip()
+                if not linea:
                     break
                 try:
-                    pt = parse_point(line)
+                    pt = parsear_punto(linea)
                     B.append(pt)
                 except Exception as e:
                     print("Error:", e)
             print("Conjunto B actualizado.")
-        elif opt == '5' or opt == '6':
+        elif opcion == '5' or opcion == '6':
             if not A:
                 print("Conjunto A vacío. No se puede calcular.")
                 continue
@@ -150,20 +139,20 @@ def menu():
                 print("Conjunto B vacío. No se puede calcular.")
                 continue
 
-            print_points(A, "Conjunto A (referencia)")
-            print_points(B, "Conjunto B (a clasificar)")
+            imprimir_puntos(A, "Conjunto A (referencia)")
+            imprimir_puntos(B, "Conjunto B (a clasificar)")
 
-            if opt == '5':
-                ranks = compute_ranks_bruteforce(A, B)
-                method = "Bruteforce O(|A|*|B|)"
+            if opcion == '5':
+                rangos = calcular_rangos_fuerza_bruta(A, B)
+                metodo = "Fuerza Bruta O(|A|*|B|)"
             else:
-                ranks = compute_ranks_sorted(A, B)
-                method = "Ordenado + binsearch O((|A|+|B|) log |A|)"
+                rangos = calcular_rangos_ordenado(A, B)
+                metodo = "Ordenado + Búsqueda Binaria O((|A|+|B|) log |A|)"
 
-            print(f"\nResultados ({method}):")
-            for i, ((bx, by), r) in enumerate(zip(B, ranks)):
+            print(f"\nResultados ({metodo}):")
+            for i, ((bx, by), r) in enumerate(zip(B, rangos)):
                 print(f" Punto B[{i}] = ({bx}, {by})  =>  Rango = {r}")
-        elif opt == '7':
+        elif opcion == '7':
             print("Saliendo.")
             break
         else:
