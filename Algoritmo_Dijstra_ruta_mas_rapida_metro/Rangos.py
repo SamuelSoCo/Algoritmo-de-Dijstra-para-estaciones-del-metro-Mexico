@@ -4,13 +4,12 @@ from typing import List, Tuple
 Punto = Tuple[float, float]  # (x, y)
 
 
-# -----------------------------
-# Implementación simple (clara)
-# -----------------------------
+
+# Implementación simple 
 def calcular_rangos_fuerza_bruta(ConjuntoA: List[Punto], ConjuntoB: List[Punto]) -> List[int]:
     """
     Para cada punto p en B cuenta cuántos puntos q en A tienen q.y < p.y.
-    Complejidad: O(|A| * |B|). Muy clara pero lenta si A y B son grandes.
+    Complejidad: O(|A| * |B|)
     """
     rangos = []
     for _, coordenada_y_b in ConjuntoB:
@@ -23,8 +22,8 @@ def calcular_rangos_fuerza_bruta(ConjuntoA: List[Punto], ConjuntoB: List[Punto])
 
 
 # -----------------------------------------
-# Implementación más eficiente (ordenada)
-# -----------------------------------------
+# Implementación más eficiente ordenando elementos
+
 def calcular_rangos_ordenado(ConjuntoA: List[Punto], ConjuntoB: List[Punto]) -> List[int]:
     """
     Ordena las coordenadas Y de A y usa búsqueda binaria para contar
@@ -42,7 +41,7 @@ def calcular_rangos_ordenado(ConjuntoA: List[Punto], ConjuntoB: List[Punto]) -> 
     return rangos
 
 
-# -----------------------------
+
 # Utilidades de entrada/impresion
 # -----------------------------
 def parsear_punto(texto: str) -> Punto:
@@ -64,9 +63,9 @@ def imprimir_puntos(puntos: List[Punto], etiqueta: str = "Puntos"):
     print()
 
 
-# -----------------------------
-# Datos de ejemplo (imagen ayuda)
-# -----------------------------
+
+# Datos de ejemplo 
+
 EJEMPLO_A = [
     (0.5, 3.0),
     (0.1, 1.0),
@@ -82,7 +81,7 @@ EJEMPLO_B = [
 
 # -----------------------------
 # Menú simple en consola
-# -----------------------------
+
 def menu():
     A = EJEMPLO_A.copy()
     B = EJEMPLO_B.copy()
@@ -160,4 +159,5 @@ def menu():
 
 
 if __name__ == "__main__":
+
     menu()
